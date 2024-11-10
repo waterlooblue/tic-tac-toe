@@ -1,5 +1,5 @@
 export interface Square {
+  position: number,
   value: string,
-  square: number,
   enabled: boolean
 }

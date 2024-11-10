@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { SquareComponent } from '../square/square.component';
 import { MovementsService } from '../../services/movements.service';
-import { Movement } from '../../model/movement';
 import { Square } from '../../model/square';
 
 @Component({
@@ -17,7 +16,7 @@ export class BoardComponent {
   currentPlayer = 'x';
   isGameWon = false;
   isGameDraw = false;
-  squares = [
+  squares: Square[] = [
     { position: 0, value: '', enabled: true },
     { position: 1, value: '', enabled: true },
     { position: 2, value: '', enabled: true },
@@ -35,22 +34,13 @@ export class BoardComponent {
     this.movementsService.addMove($event);
     this.setSquareValue($event);
     this.disableSquare($event);
-    this.nextPlayer();
-  }
-  setSquareValue(position: number) {
-    const square = this.squares.find(square => square.position === position);
-    if(square != null) {
-      square.value = this.currentPlayer;
+    this.isGameWon = this.movementsService.isGameWon();
+    this.isGameDraw = this.movementsService.isGameDraw();
+    if (this.isGameWon) {
+      this.disableAllSquares();
+    } else {
+      this.nextPlayer();
     }
-  }
-  disableSquare(position: number) {
-    const square = this.squares.find(square => square.position === position);
-    if(square != null) {
-      square.enabled = false;
-    }
-  }
-  nextPlayer() {
-    this.currentPlayer = this.movementsService.nextPlayer();
   }
   reset() {
     this.movementsService.resetBoard();
@@ -58,6 +48,29 @@ export class BoardComponent {
       square.enabled = true;
       square.value = ''
     }));
+    this.isGameWon = false;
+    this.isGameDraw = false;
+  }
+  private getSquareByPosition(position: number): Square | undefined {
+    return this.squares.find(square => square?.position === position);
+  }
+  private setSquareValue(position: number) {
+    const square = this.getSquareByPosition(position) || {position: 8, value: '', enabled: true};
+    if(square != null) {
+      square.value = this.currentPlayer;
+    }
+  }
+  private disableSquare(position: number) {
+    const square = this.getSquareByPosition(position);
+    if(square != null) {
+      square.enabled = false;
+    }
+  }
+  private disableAllSquares(): void {
+    this.squares.forEach(square => square.enabled = false);
+  }
+  private nextPlayer() {
+    this.currentPlayer = this.movementsService.nextPlayer();
   }
   ngOnInit() {
     this.currentPlayer = this.movementsService.currentPlayer;

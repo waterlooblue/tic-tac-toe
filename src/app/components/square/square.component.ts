@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Square } from '../../model/square';
 
 @Component({
   selector: 'app-square',
@@ -8,9 +9,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './square.component.scss'
 })
 export class SquareComponent {
-  @Input() props: { square: number, enabled: boolean, value: string }
+  @Input() props: Square;
   @Output() clickEvent = new EventEmitter<number>();
   sendClickEvent() {
-    this.clickEvent.emit(this.props.square);
+    this.clickEvent.emit(this.props.position);
   }
 }

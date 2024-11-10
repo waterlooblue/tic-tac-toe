@@ -1,4 +1,4 @@
 export interface Movement {
   player: string,
-  square: number,
+  position: number,
 }

@@ -1,4 +1,6 @@
 <div class="grid">
-  <app-square *ngFor="let square of squares" [props]="{square: square.position, enabled: square.enabled, value: square.value}" (clickEvent)="receiveClick($event)" class="square"/>
+  <app-square *ngFor="let square of squares" [props]="{position: square.position, enabled: square.enabled, value: square.value}" (clickEvent)="receiveClick($event)" class="square"/>
 </div>
+<p *ngIf="isGameWon"> {{ currentPlayer }} has won the game. Play again?</p>
+<p *ngIf="isGameDraw"> Game ended in a draw. Play again?</p>
 <button (click)="reset()">{{'Reset'}}</button>
