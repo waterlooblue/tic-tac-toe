@@ -31,7 +31,6 @@ export class MovementsService {
   resetBoard(): void {
     this.movements = [];
     this.gameIsWon = false;
-    this.currentPlayer = 'x';
   }
   isGameDraw(): boolean {
     return this.movements.length === 9 && !this.gameIsWon;
