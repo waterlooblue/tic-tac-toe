@@ -1,3 +1,7 @@
+<div style="margin-bottom: 30px">
+  <button (click)="togglePlayers()" [disabled]="!playComputer">2 Players</button>
+  <button (click)="togglePlayers()" [disabled]="playComputer">Computer</button>
+</div>
 <div class="grid">
   <app-square *ngFor="let square of squares" [props]="{position: square.position, enabled: square.enabled, value: square.value}" (clickEvent)="receiveClick($event)" class="square"/>
 </div>

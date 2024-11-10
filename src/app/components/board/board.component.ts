@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { SquareComponent } from '../square/square.component';
-import { MovementsService } from '../../services/movements.service';
+import { MovementsService } from '../../services/movements/movements.service';
 import { Square } from '../../model/square';
 
 @Component({
@@ -14,6 +14,7 @@ import { Square } from '../../model/square';
 export class BoardComponent {
   // Initialize the board
   currentPlayer = 'x';
+  playComputer = false;
   isGameWon = false;
   isGameDraw = false;
   squares: Square[] = [
@@ -40,7 +41,13 @@ export class BoardComponent {
       this.disableAllSquares();
     } else {
       this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
+      if (this.playComputer) {
+
+      }
     }
+  }
+  togglePlayers(): void {
+    this.playComputer = !this.playComputer;
   }
   reset() {
     this.movementsService.resetBoard();

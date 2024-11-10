@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Movement } from '../model/movement';
+import { Movement } from '../../model/movement';
 
 @Injectable({
   providedIn: 'root'
