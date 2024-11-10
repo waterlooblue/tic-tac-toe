@@ -1,1 +1,4 @@
-<p>board works!</p>
+<div class="grid">
+  <app-square *ngFor="let square of squares" [props]="{square: square.position, enabled: square.enabled, value: square.value}" (clickEvent)="receiveClick($event)" class="square"/>
+</div>
+<button (click)="reset()">{{'Reset'}}</button>
