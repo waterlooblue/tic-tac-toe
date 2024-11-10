@@ -48,7 +48,6 @@ export class BoardComponent {
     this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
     if (this.playComputer && this.currentPlayer === 'o') {
       this.computerMove();
-      console.log('hit')
     }
   }
   private playerMove(position: number): void {
