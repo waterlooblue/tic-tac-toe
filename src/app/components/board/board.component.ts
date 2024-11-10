@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { SquareComponent } from '../square/square.component';
 import { MovementsService } from '../../services/movements/movements.service';
+import { ComputerService } from '../../services/computer/computer.service';
 import { Square } from '../../model/square';
 
 @Component({
@@ -28,23 +29,10 @@ export class BoardComponent {
     { position: 7, value: '', enabled: true },
     { position: 8, value: '', enabled: true }
   ];
-  constructor(private movementsService: MovementsService) {
-    
-  }
+  constructor(private movementsService: MovementsService, private computerService: ComputerService) { }
   receiveClick ($event: number) {
-    this.movementsService.addMove({position: $event, player: this.currentPlayer});
-    this.setSquareValue($event);
-    this.disableSquare($event);
-    this.isGameWon = this.movementsService.isGameWon(this.currentPlayer);
-    this.isGameDraw = this.movementsService.isGameDraw() && !this.isGameWon;
-    if (this.isGameWon) {
-      this.disableAllSquares();
-    } else {
-      this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
-      if (this.playComputer) {
-
-      }
-    }
+    this.playerMove($event);
+    this.checkBoardForEnd();
   }
   togglePlayers(): void {
     this.playComputer = !this.playComputer;
@@ -57,19 +45,42 @@ export class BoardComponent {
     }));
     this.isGameWon = false;
     this.isGameDraw = false;
+    this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
+    if (this.playComputer && this.currentPlayer === 'o') {
+      this.computerMove();
+      console.log('hit')
+    }
+  }
+  private playerMove(position: number): void {
+    this.movementsService.addMove({position: position, player: this.currentPlayer});
+    this.setSquareValue(position);
+  }
+  private computerMove(): void {
+    const move = this.computerService.findNextMove(this.squares);
+    this.movementsService.addMove({position: move.position, player: this.currentPlayer});
+    this.setSquareValue(move.position);
+    this.checkBoardForEnd();
+  }
+  private checkBoardForEnd(): void {
+    this.isGameWon = this.movementsService.isGameWon(this.currentPlayer);
+    this.isGameDraw = this.movementsService.isGameDraw() && !this.isGameWon;
+    if (this.isGameWon) {
+      this.disableAllSquares();
+    } else {
+      this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
+      if (this.playComputer && this.currentPlayer === 'o') {
+        // Call next move for the computer
+        this.computerMove();
+      }
+    }
   }
   private getSquareByPosition(position: number): Square | undefined {
     return this.squares.find(square => square?.position === position);
   }
   private setSquareValue(position: number) {
-    const square = this.getSquareByPosition(position) || {position: 8, value: '', enabled: true};
-    if(square != null) {
-      square.value = this.currentPlayer;
-    }
-  }
-  private disableSquare(position: number) {
     const square = this.getSquareByPosition(position);
     if(square != null) {
+      square.value = this.currentPlayer;
       square.enabled = false;
     }
   }
