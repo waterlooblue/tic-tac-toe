@@ -8,7 +8,8 @@ import { Movement } from '../../model/movement';
 export class ComputerService {
   constructor() { }
   findNextMove(squares: Square[]): Movement {
-    let remainingSpaces = squares.filter(square => square.value === '');
-    return { position: remainingSpaces[0].position, player: 'o'};
+    const remainingSpaces = squares.filter(square => square.value === '');
+    const firstAvailablePosition = { position: remainingSpaces[0].position, player: 'o'}
+    return firstAvailablePosition;
   }
 }

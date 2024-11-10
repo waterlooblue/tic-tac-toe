@@ -36,6 +36,7 @@ export class BoardComponent {
   }
   togglePlayers(): void {
     this.playComputer = !this.playComputer;
+    this.reset();
   }
   reset() {
     this.movementsService.resetBoard();

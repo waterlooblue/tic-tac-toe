@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Square } from '../../model/square';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-square',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './square.component.html',
   styleUrl: './square.component.scss'
 })

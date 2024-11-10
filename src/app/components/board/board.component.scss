@@ -1,12 +1,33 @@
 .grid {
   display: flex;
   flex-wrap: wrap;
-  max-width: 500px;
+  max-width: 800px;
+  margin: auto;
   margin-bottom: 30px;
+  background-color: transparent;
 }
 
 .square {
   flex: 1 1 33%;
   width: 33%;
   min-height: 100px;
+  @media screen and (min-width: 500px) {
+    min-height: 200px;
+  }
+}
+
+.background {
+  min-height: 100vh;
+  background-color: #212121;
+}
+
+.container {
+  max-width: 800px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: auto;
+}
+
+p {
+  color: white;
 }
