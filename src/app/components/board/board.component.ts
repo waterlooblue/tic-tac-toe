@@ -31,15 +31,15 @@ export class BoardComponent {
     
   }
   receiveClick ($event: number) {
-    this.movementsService.addMove($event);
+    this.movementsService.addMove({position: $event, player: this.currentPlayer});
     this.setSquareValue($event);
     this.disableSquare($event);
-    this.isGameWon = this.movementsService.isGameWon();
-    this.isGameDraw = this.movementsService.isGameDraw();
+    this.isGameWon = this.movementsService.isGameWon(this.currentPlayer);
+    this.isGameDraw = this.movementsService.isGameDraw() && !this.isGameWon;
     if (this.isGameWon) {
       this.disableAllSquares();
     } else {
-      this.nextPlayer();
+      this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
     }
   }
   reset() {
@@ -68,11 +68,5 @@ export class BoardComponent {
   }
   private disableAllSquares(): void {
     this.squares.forEach(square => square.enabled = false);
-  }
-  private nextPlayer() {
-    this.currentPlayer = this.movementsService.nextPlayer();
-  }
-  ngOnInit() {
-    this.currentPlayer = this.movementsService.currentPlayer;
   }
 }

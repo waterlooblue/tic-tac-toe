@@ -7,8 +7,6 @@ import { Movement } from '../model/movement';
 export class MovementsService {
   constructor() { }
   movements: Movement[] = [];
-  currentPlayer = 'x';
-  gameIsWon = false;
   winningCombinations = [
     [0, 1, 2],
     [3, 4, 5],
@@ -19,34 +17,30 @@ export class MovementsService {
     [0, 4, 8],
     [2, 4, 6]
   ];
-  addMove(position: number): void {
+  addMove(move: Movement): void {
     this.movements.push({
-      player: this.currentPlayer,
-      position: position
+      position: move.position,
+      player: move.player
     });
   }
-  nextPlayer(): string {
-    return this.currentPlayer = this.currentPlayer === 'x' ? 'o' : 'x';
+  nextPlayer(player: string): string {
+    return player === 'x' ? 'o' : 'x';
   }
   resetBoard(): void {
     this.movements = [];
-    this.gameIsWon = false;
   }
   isGameDraw(): boolean {
-    return this.movements.length === 9 && !this.gameIsWon;
+    return this.movements.length === 9;
   }
-  isGameWon(): boolean {
-    const currentPlayerMovements = this.movements.filter(move => move.player === this.currentPlayer);;
+  isGameWon(currentPlayer: string): boolean {
+    const currentPlayerMovements = this.movements.filter(move => move.player === currentPlayer);
+    let gameIsWon = false;
     this.winningCombinations.forEach(combo => {
       const matchingMovements = currentPlayerMovements.filter(move => move.position === combo[0] || move.position === combo[1] || move.position === combo[2]);
       if (matchingMovements.length === 3) {
-        console.log('Player has won')
-        this.gameIsWon = true;
+        gameIsWon = true;
       }
     });
-    return this.gameIsWon;
-  }
-  private endGame(): void {
-    // Add functions to end the game
+    return gameIsWon;
   }
 }
