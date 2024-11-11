@@ -81,7 +81,7 @@ export class BoardComponent {
    * Calls the computer service to determine a move
    */
   private computerMove(): void {
-    const move = this.computerService.getAvailableSquares(this.squares);
+    const move = this.computerService.getComputerMove(this.squares);
     this.movementsService.addMove({position: move.position, player: this.currentPlayer});
     this.setSquareValue(move.position);
     this.checkBoardForEnd();

@@ -9,29 +9,38 @@ export class ComputerService {
   constructor() { }
 
   /**
+   * Grid values
+   * 0 | 1 | 2
+   * 3 | 4 | 5
+   * 6 | 7 | 8 
+   */
+  
+  /**
+   * Determines the best move for the computer
+   * @param squares list of all squares
+   * @returns a movement for the computer
+   */
+  getComputerMove(squares: Square[]): Movement {
+    const remainingSquares = this.getAvailableSquares(squares);
+    if (remainingSquares.length === 9) {
+      console.log('First move');
+      return this.getRandomCornerPosition();
+    } else {
+      if (this.isCenterPositionAvailable(remainingSquares)) {
+        return this.setMovement(4);
+      }
+    }
+    return this.getFirstAvailablePosition(remainingSquares);
+  }
+
+  /**
    * Finds the first available square
    * @param squares list of all squares
    * @returns 
    */
-  getAvailableSquares(squares: Square[]): Movement {
+  private getAvailableSquares(squares: Square[]): Square[] {
     const remainingSpaces = squares.filter(square => square.value === '');
-    const firstAvailablePosition = this.getFirstAvailablePosition(remainingSpaces);
-    return firstAvailablePosition;
-  }
-
-  /**
-   * Determines if all squares are still enabled
-   * @param squares list of all squares
-   * @returns boolean if this is the first move
-   */
-  isFirstMove(squares: Square[]): boolean {
-    let isFirstMove = true;
-    squares.forEach(square => {
-      if (!square.enabled) {
-        isFirstMove = false;
-      }
-    });
-    return isFirstMove;
+    return remainingSpaces;
   }
 
   /**
@@ -40,6 +49,34 @@ export class ComputerService {
    * @returns first available square
    */
   private getFirstAvailablePosition(squares: Square[]): Movement {
-    return { position: squares[0].position, player: 'o'};
+    return this.setMovement(squares[0].position);
+  }
+
+  /**
+   * If making the first move. Determines corner to start from
+   * @returns a random corner to start from
+   */
+  private getRandomCornerPosition(): Movement {
+    const corners = [0,2,6,8]
+    const randomCorner = Math.floor((Math.random() * corners.length) + 1)
+    return this.setMovement(corners[randomCorner]);
+  }
+
+  /**
+   * Determines if the center is available
+   * @param squares remaining squares
+   * @returns boolean if the center is available
+   */
+  private isCenterPositionAvailable(squares: Square[]): boolean {
+    return squares.some(square => square.position === 4);
+  }
+
+  /**
+   * Sets the position in a movement object
+   * @param position to be set for movement
+   * @returns movement object
+   */
+  private setMovement(position: number): Movement {
+    return { position: position, player: 'o' }
   }
 }
