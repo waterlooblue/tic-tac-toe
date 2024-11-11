@@ -11,13 +11,13 @@
   @media screen and (min-width: 500px) {
     font-size: 60px;
   }
-  &:enabled {
-    cursor: pointer;
+  &:disabled {
+    cursor: auto;
   }
 }
 
 .text-blue {
-  color: rgb(14, 43, 173);
+  color: rgb(223, 229, 255);
 }
 
 .text-orange {

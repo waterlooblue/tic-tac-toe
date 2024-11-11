@@ -7,9 +7,39 @@ import { Movement } from '../../model/movement';
 })
 export class ComputerService {
   constructor() { }
-  findNextMove(squares: Square[]): Movement {
+
+  /**
+   * Finds the first available square
+   * @param squares list of all squares
+   * @returns 
+   */
+  getAvailableSquares(squares: Square[]): Movement {
     const remainingSpaces = squares.filter(square => square.value === '');
-    const firstAvailablePosition = { position: remainingSpaces[0].position, player: 'o'}
+    const firstAvailablePosition = this.getFirstAvailablePosition(remainingSpaces);
     return firstAvailablePosition;
+  }
+
+  /**
+   * Determines if all squares are still enabled
+   * @param squares list of all squares
+   * @returns boolean if this is the first move
+   */
+  isFirstMove(squares: Square[]): boolean {
+    let isFirstMove = true;
+    squares.forEach(square => {
+      if (!square.enabled) {
+        isFirstMove = false;
+      }
+    });
+    return isFirstMove;
+  }
+
+  /**
+   * Easy mode for computer that plays first available move
+   * @param squares list of available squares
+   * @returns first available square
+   */
+  private getFirstAvailablePosition(squares: Square[]): Movement {
+    return { position: squares[0].position, player: 'o'};
   }
 }
