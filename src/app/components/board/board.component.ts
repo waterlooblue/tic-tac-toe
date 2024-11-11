@@ -96,7 +96,7 @@ export class BoardComponent {
     this.isGameDraw = this.movementsService.isGameDraw() && !this.isGameWon;
     if (this.isGameWon) {
       this.disableAllSquares(this.squares);
-    } else {
+    } else if (!this.isGameDraw) {
       this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
       if (this.playComputer && this.currentPlayer === 'o') {
         // Call next move for the computer
