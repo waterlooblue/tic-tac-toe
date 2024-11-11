@@ -1,5 +1,5 @@
 <div class="background">
-  <div class="container">
+  <section class="container">
     <div style="margin-bottom: 30px; padding-top: 30px;">
       <button (click)="togglePlayers()" [disabled]="!playComputer" style="margin-right: 5px;">2 Players</button>
       <button (click)="togglePlayers()" [disabled]="playComputer">Play vs Computer</button>
@@ -11,5 +11,5 @@
     <p *ngIf="isGameWon"> {{ currentPlayer === 'x' ? 'Player 1' : 'Player 2' }} has won the game. Play again?</p>
     <p *ngIf="isGameDraw"> Game ended in a draw. Play again?</p>
     <button *ngIf="isGameWon || isGameDraw" (click)="reset()" class="reset">{{'Play Again'}}</button>
-  </div>
+  </section>
 </div>
