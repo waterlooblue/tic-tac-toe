@@ -1,7 +1,7 @@
 <div class="background">
   <div class="container">
     <div style="margin-bottom: 30px; padding-top: 30px;">
-      <button (click)="togglePlayers()" [disabled]="!playComputer">2 Players</button>
+      <button (click)="togglePlayers()" [disabled]="!playComputer" style="margin-right: 5px;">2 Players</button>
       <button (click)="togglePlayers()" [disabled]="playComputer">Computer</button>
     </div>
     <p *ngIf="!playComputer">It is {{ currentPlayer === 'x' ? 'Player 1\'s' : 'Player 2\'s' }} turn</p>
@@ -10,6 +10,6 @@
     </div>
     <p *ngIf="isGameWon"> {{ currentPlayer | uppercase }} has won the game. Play again?</p>
     <p *ngIf="isGameDraw"> Game ended in a draw. Play again?</p>
-    <button (click)="reset()">{{'Reset'}}</button>
+    <button (click)="reset()" class="reset">{{'Reset'}}</button>
   </div>
 </div>
