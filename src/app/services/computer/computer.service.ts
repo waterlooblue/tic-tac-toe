@@ -22,15 +22,13 @@ export class ComputerService {
    */
   getComputerMove(squares: Square[]): Movement {
     const remainingSquares = this.getAvailableSquares(squares);
+    // Checks if this is the first move
     if (remainingSquares.length === 9) {
-      console.log('First move');
       return this.getRandomCornerPosition();
-    } else {
-      if (this.isCenterPositionAvailable(remainingSquares)) {
-        return this.setMovement(4);
-      }
+    } else if (this.isCenterPositionAvailable(remainingSquares)) {
+      return this.setMovement(4);
     }
-    return this.getFirstAvailablePosition(remainingSquares);
+    return this.getRandomPosition(remainingSquares);
   }
 
   /**
@@ -44,12 +42,13 @@ export class ComputerService {
   }
 
   /**
-   * Easy mode for computer that plays first available move
+   * Easy mode for computer that plays random available move
    * @param squares list of available squares
-   * @returns first available square
+   * @returns random available square
    */
-  private getFirstAvailablePosition(squares: Square[]): Movement {
-    return this.setMovement(squares[0].position);
+  private getRandomPosition(squares: Square[]): Movement {
+    const randomPosition = Math.floor((Math.random() * squares.length));
+    return this.setMovement(squares[randomPosition].position);
   }
 
   /**
@@ -58,7 +57,7 @@ export class ComputerService {
    */
   private getRandomCornerPosition(): Movement {
     const corners = [0,2,6,8]
-    const randomCorner = Math.floor((Math.random() * corners.length) + 1)
+    const randomCorner = Math.floor((Math.random() * corners.length))
     return this.setMovement(corners[randomCorner]);
   }
 
