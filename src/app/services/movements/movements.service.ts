@@ -6,10 +6,13 @@ import { Movement } from '../../model/movement';
 })
 export class MovementsService {
   constructor() { }
-  
-  // Tracks all movements
-  movements: Movement[] = [];
-  
+
+  /**
+   * Grid values
+   * 0 | 1 | 2
+   * 3 | 4 | 5
+   * 6 | 7 | 8 
+   */
   // There are 8 combinations that equal a win (3 squares in a row)
   winningCombinations = [
     [0, 1, 2],
@@ -21,6 +24,9 @@ export class MovementsService {
     [0, 4, 8],
     [2, 4, 6]
   ];
+
+   // Tracks all movements
+  movements: Movement[] = [];
 
   /**
    * Adds a move to the movements array
@@ -56,23 +62,40 @@ export class MovementsService {
   isGameDraw(): boolean {
     return this.movements.length === 9;
   }
-  
+
   /**
    * Determines if movements match a winning combination
    * @param currentPlayer the current player
    * @returns if the game has been won
    */
   isGameWon(currentPlayer: string): boolean {
-    // Filters movements to the current player
-    const currentPlayerMovements = this.movements.filter(move => move.player === currentPlayer);
+    const currentPlayerMovements = this.getPlayerMovements(currentPlayer);
     let gameIsWon = false;
     this.winningCombinations.forEach(combo => {
-      // Filters movements to see if they match a winning combintaion
-      const matchingMovements = currentPlayerMovements.filter(move => move.position === combo[0] || move.position === combo[1] || move.position === combo[2]);
+      const matchingMovements = this.compareWinningMovements(currentPlayerMovements, combo);
       if (matchingMovements.length === 3) {
         gameIsWon = true;
       }
     });
     return gameIsWon;
+  }
+
+  /**
+   * Filters movements
+   * @param player to filter for
+   * @returns movements from the player
+   */
+  private getPlayerMovements(player: string): Movement[] {
+    return this.movements.filter(move => move.player === player);
+  }
+
+  /**
+   * Determines possible winning moves or if win exist
+   * @param playerMovements list of player movements
+   * @param combo winning combination
+   * @returns matching movements to winning combinations
+   */
+  private compareWinningMovements(playerMovements: Movement[], combo: number[]): Movement[] {
+    return playerMovements.filter(move => move.position === combo[0] || move.position === combo[1] || move.position === combo[2]);
   }
 }
