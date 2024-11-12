@@ -12,6 +12,16 @@
   }
 }
 
+.row {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  @media screen and (min-width: 500px) {
+    flex-direction: row;
+  }
+}
+
 .square {
   flex: 1 1 33%;
   width: 33%;

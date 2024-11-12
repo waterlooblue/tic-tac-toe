@@ -18,6 +18,10 @@ export class BoardComponent {
   playComputer = false;
   isGameWon = false;
   isGameDraw = false;
+  playerOneWins = 0;
+  playerTwoWins = 0;
+  computerWins = 0;
+  draws = 0;
   squares: Square[] = [
     { position: 0, value: '', enabled: true },
     { position: 1, value: '', enabled: true },
@@ -48,6 +52,10 @@ export class BoardComponent {
    */
   togglePlayers(): void {
     this.playComputer = !this.playComputer;
+    this.playerOneWins = 0;
+    this.playerTwoWins = 0;
+    this.computerWins = 0;
+    this.draws = 0;
     this.reset();
   }
 
@@ -95,6 +103,13 @@ export class BoardComponent {
     this.isGameWon = this.movementsService.isGameWon(this.currentPlayer);
     this.isGameDraw = this.movementsService.isGameDraw() && !this.isGameWon;
     if (this.isGameWon) {
+      if (this.currentPlayer === 'x') {
+        this.playerOneWins += 1;
+      } else if (this.playComputer && this.currentPlayer === 'o') {
+        this.computerWins += 1;
+      } else {
+        this.playerTwoWins += 1;
+      }
       this.disableAllSquares(this.squares);
     } else if (!this.isGameDraw) {
       this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
@@ -102,6 +117,8 @@ export class BoardComponent {
         // Call next move for the computer
         setTimeout(() => this.computerMove(), 300);
       }
+    } else {
+      this.draws += 1;
     }
   }
 

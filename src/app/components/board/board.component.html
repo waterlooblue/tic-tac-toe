@@ -7,9 +7,19 @@
     <div [ngClass]="{'complete': isGameWon || isGameDraw}" class="grid">
       <app-square *ngFor="let square of squares" [props]="{position: square.position, enabled: square.enabled, value: square.value}" (clickEvent)="receiveClick($event)" class="square"/>
     </div>
-    <p *ngIf="!isGameWon && !isGameDraw">It is {{ currentPlayer === 'x' ? 'Player 1\'s' : 'Player 2\'s' }} turn</p>
-    <p *ngIf="isGameWon"> {{ currentPlayer === 'x' ? 'Player 1' : 'Player 2' }} has won the game. Play again?</p>
-    <p *ngIf="isGameDraw"> Game ended in a draw. Play again?</p>
-    <button *ngIf="isGameWon || isGameDraw" (click)="reset()" class="reset">{{'Play Again'}}</button>
+    <div class="row">
+      <div>
+        <p>Player 1 wins: {{ playerOneWins }}</p>
+        <p *ngIf="!playComputer">Player 2 wins: {{ playerTwoWins }}</p>
+        <p *ngIf="playComputer">Computer wins: {{ computerWins }}</p>
+        <p>Draws: {{ draws }}</p>
+      </div>
+      <div>
+        <p *ngIf="!isGameWon && !isGameDraw">It is {{ currentPlayer === 'x' ? 'Player 1\'s' : 'Player 2\'s' }} turn</p>
+        <p *ngIf="isGameWon"> {{ currentPlayer === 'x' ? 'Player 1' : 'Player 2' }} has won the game. Play again?</p>
+        <p *ngIf="isGameDraw"> Game ended in a draw. Play again?</p>
+        <button *ngIf="isGameWon || isGameDraw" (click)="reset()" class="reset">{{'Play Again'}}</button>
+      </div>
+    </div>
   </section>
 </div>
