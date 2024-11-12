@@ -64,7 +64,7 @@ export class BoardComponent {
     this.isGameDraw = false;
     this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
     if (this.playComputer && this.currentPlayer === 'o') {
-      setTimeout(() => this.computerMove(), 1000);
+      setTimeout(() => this.computerMove(), 300);
     }
   }
 
@@ -100,7 +100,7 @@ export class BoardComponent {
       this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
       if (this.playComputer && this.currentPlayer === 'o') {
         // Call next move for the computer
-        setTimeout(() => this.computerMove(), 1000);
+        setTimeout(() => this.computerMove(), 300);
       }
     }
   }
