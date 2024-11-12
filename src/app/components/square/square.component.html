@@ -1,0 +1,11 @@
+<button 
+  (click)="sendClickEvent()"
+  class="inner-square"
+  [disabled]="!props.enabled"
+  [ngClass]="{
+    'text-blue': props.value === 'x',
+    'text-orange': props.value === 'o'
+  }"
+>
+  {{ props.value }}
+</button>

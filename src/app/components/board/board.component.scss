@@ -1,0 +1,51 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  margin-bottom: 30px;
+  background-color: rgb(12, 20, 29);
+  border: 3px solid rgb(34, 156, 150);
+  &.complete {
+    background-color: rgb(16, 27, 39);
+  }
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  @media screen and (min-width: 500px) {
+    flex-direction: row;
+  }
+}
+
+.square {
+  flex: 1 1 33%;
+  width: 33%;
+  min-height: 100px;
+  @media screen and (min-width: 500px) {
+    min-height: 200px;
+  }
+}
+
+.background {
+  min-height: 100vh;
+  background-color: rgb(16, 27, 39);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: 800px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: auto;
+}
+
+p {
+  color: white;
+}
