@@ -62,7 +62,7 @@ export class ComputerService {
         nextMove = this.fourthMove(squares);
         break
       default:
-        nextMove = this.nextBestMove(remainingSquares);
+        nextMove = this.nextBestMove(squares);
     }
     return nextMove;
   }
@@ -249,13 +249,12 @@ export class ComputerService {
 
   /**
    * Checks for win move, then check for block move
-   * Prioritizes corner over side movement to setup a fork to win
-   * @param squares list of remaining squares
+   * @param squares list of all squares
    * @returns next best move
    */
   private nextBestMove(squares: Square[]): Movement {
-      const remainingCorners = squares.filter(square => square.value === '' && this.corners.some(corner => corner === square.position));
-      let nextMove = this.getRandomPosition(squares)
+      const remainingSquares = this.getRemainingSquares(squares);
+      let nextMove = this.getRandomPosition(remainingSquares)
       // Check for win move
       const winningMove = this.getWinMovement(squares, 'o');
       // Check for block move
@@ -264,8 +263,6 @@ export class ComputerService {
         nextMove = winningMove;
       } else if (blockOpponentWinningMove) {
         nextMove = blockOpponentWinningMove;
-      } else if (remainingCorners) {
-        nextMove = this.getRandomCornerPosition(squares);
       }
     return nextMove;
   }
