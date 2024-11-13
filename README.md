@@ -1,5 +1,8 @@
 # TicTacToe
 
+https://tictactoefree.com/tips/how-to-win-in-tic-tac-toe
+https://tictactoefree.com/tips/how-to-win-tic-tac-toe-if-you-go-second
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.11.
 
 ## Development server

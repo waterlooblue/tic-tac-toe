@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Square } from '../../model/square';
 import { Movement } from '../../model/movement';
-import { MovementsService } from '../movements/movements.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComputerService {
-  constructor(private movementsService: MovementsService) { }
+  constructor() { }
 
   /**
    * Grid values
@@ -33,61 +32,39 @@ export class ComputerService {
     [2, 4, 6]
   ];
 
+  // Opposite corners
+  oppositeCorners = [
+    [0, 8],
+    [2, 6]
+  ];
+
   /**
-   * Determines the best move for the computer
+   * If first move take a cornerIf second move, analyze first move. If corner - take center, If edge take corner
+   * If third move, check if opposite corner or center was played.
+   * Every move after, check for win, check for block, setup 2 win conditions or pick random
    * @param squares list of all squares
    * @returns a movement for the computer
    */
   getComputerMove(squares: Square[]): Movement {
-    const remainingSquares = this.getAvailableSquares(squares);
+    const remainingSquares = this.getRemainingSquares(squares);
     let nextMove = this.getRandomPosition(remainingSquares);
-    // If making the first move
-    if (remainingSquares.length === 9) {
-      nextMove = this.getRandomCornerPosition(squares);
-    } else if (remainingSquares.length === 8) {
-      // If making the second move
-      const moveType = this.getUserStartingPosition(squares);
-      switch(moveType) {
-        case 'corner':
-        case 'edge':
-          nextMove = this.setMovement(this.center);
-          break;
-        default:
-          // Take a corner if the user played the center
-          nextMove = this.getRandomCornerPosition(squares);
-      }
-    } else if (remainingSquares.length === 7 && !this.isCenterPositionAvailable(squares)) {
-        nextMove = this.getRandomCornerPosition(squares);
-    } else {
-      // Check for win 2 matches in win condition with the 3rd being available
-      const winningMove = this.getWinMovement(squares, 'o');
-      // Check for block, opponent has 2 matches with a 3rd being available
-      const blockWinningMove = this.getWinMovement(squares, 'x');
-      if (winningMove) {
-        nextMove = winningMove;
-      } else if (blockWinningMove) {
-        nextMove = blockWinningMove;
-      } else {
-        const playerCorners = this.getPlayerCorners(squares);
-        if (playerCorners.length === 2) {
-          nextMove = this.getRandomSidePosition(squares);
-        }
-      }
+    switch(remainingSquares.length) {
+      case 9:
+        nextMove = this.firstMove(squares);
+        break;
+      case 8:
+        nextMove = this.secondMove(squares);
+        break;
+      case 7:
+        nextMove = this.thirdMove(squares);
+        break
+      case 6:
+        nextMove = this.fourthMove(squares);
+        break
+      default:
+        nextMove = this.nextBestMove(remainingSquares);
     }
-    // If first move take a corner
-    // If second move, analyze first move. If corner - take center, If edge take corner
-    // Every move after, check for win, check for block, setup 2 win conditions or pick random
     return nextMove;
-  }
-
-  /**
-   * Finds the first available square
-   * @param squares list of all squares
-   * @returns the remaining squares to play
-   */
-  private getAvailableSquares(squares: Square[]): Square[] {
-    const remainingSpaces = squares.filter(square => square.value === '');
-    return remainingSpaces;
   }
 
   /**
@@ -107,8 +84,11 @@ export class ComputerService {
    */
   private getRandomCornerPosition(squares: Square[]): Movement {
     const remainingCorners = squares.filter(square => square.value === '' && this.corners.some(corner => corner === square.position));
-    const randomCorner = Math.floor((Math.random() * remainingCorners.length))
-    return this.setMovement(remainingCorners[randomCorner].position);
+    if (remainingCorners.length > 0) {
+      const randomCorner = Math.floor((Math.random() * remainingCorners.length));
+      return this.setMovement(remainingCorners[randomCorner].position);
+    }
+    return this.getRandomPosition(squares);
   }
 
   /**
@@ -118,17 +98,11 @@ export class ComputerService {
    */
   private getRandomSidePosition(squares: Square[]): Movement {
     const remainingSides = squares.filter(square => square.value === '' && this.sides.some(side => side === square.position));
-    const randomCorner = Math.floor((Math.random() * remainingSides.length))
-    return this.setMovement(remainingSides[randomCorner].position);
-  }
-
-  /**
-   * Determines if the center is available
-   * @param squares remaining squares
-   * @returns boolean if the center is available
-   */
-  private isCenterPositionAvailable(squares: Square[]): boolean {
-    return squares.some(square => square.position === this.center);
+    if (remainingSides.length > 0) {
+      const randomSide = Math.floor((Math.random() * remainingSides.length));
+      return this.setMovement(remainingSides[randomSide].position)
+    }
+    return this.getRandomPosition(squares);
   }
 
   /**
@@ -165,8 +139,8 @@ export class ComputerService {
    * @returns winning/block move or null if not available
    */
   private getWinMovement(squares: Square[], player: string): Movement | null {
-    const currentPlayerSquares = squares.filter(square => square.value === player);
-    const remainingSquares = squares.filter(square => square.value === '');
+    const currentPlayerSquares = this.getPlayerSquares(player, squares);
+    const remainingSquares = this.getRemainingSquares(squares);
     let nextMove = null;
     this.winningCombinations.forEach(combo => {
       // Filters movements to see if they match a winning combintaion
@@ -184,15 +158,6 @@ export class ComputerService {
   }
 
   /**
-   * Determine if the player has two corners
-   * @param squares list of all squares
-   * @returns list of corners taken by the player
-   */
-  private getPlayerCorners(squares: Square[]): Square[] {
-    return squares.filter(square => square.value === 'x' && this.corners.some(corner => corner === square.position))
-  }
-
-  /**
    * Filters movements
    * @param player to filter for
    * @param squares list of squares
@@ -203,6 +168,15 @@ export class ComputerService {
   }
 
   /**
+   * Filter the remaining squares available
+   * @param squares list of all squares
+   * @returns remaining squares to move
+   */
+  private getRemainingSquares(squares: Square[]): Square[] {
+    return squares.filter(square => square.value === '');
+  }
+
+  /**
    * Determines possible winning moves or if win exist
    * @param playerSquares list of player squares
    * @param combo winning combination
@@ -210,6 +184,90 @@ export class ComputerService {
    */
   private compareWinningSquares(playerSquares: Square[], combo: number[]): Square[] {
     return playerSquares.filter(square => square.position === combo[0] || square.position === combo[1] || square.position === combo[2]);
+  }
+
+  /**
+   * Starting in the corner is the strongest win condition
+   * @param squares list of squares
+   * @returns first move of the game
+   */
+  private firstMove(squares: Square[]): Movement {
+    return this.getRandomCornerPosition(squares);
+  }
+
+  /**
+   * When the player starts, this will be the computers first move
+   * @param squares list of squares
+   * @returns second move of the game
+   */
+  private secondMove(squares: Square[]): Movement {
+    const moveType = this.getUserStartingPosition(squares);
+    if (moveType === 'corner' || moveType === 'edge') {
+      return this.setMovement(this.center);
+    }
+    return this.getRandomCornerPosition(squares);
+  }
+
+  /**
+   * This will be the computers second move when the player starts
+   * @param squares list of all squares
+   * @returns third move of the game
+   */
+  private thirdMove(squares: Square[]): Movement {
+    const playerSquares = this.getPlayerSquares('x', squares);
+    const computerSquares = this.getPlayerSquares('o', squares);
+    const moveType = this.getUserStartingPosition(squares);
+    // Check if player played the opposite corner
+    let oppositeCorner = false;
+    this.oppositeCorners.forEach(opposite => {
+      const matchOppositeCorners = [...playerSquares, ...computerSquares].filter(square => square.position === opposite[0] || square.position === opposite[1]);
+      if (matchOppositeCorners.length === 2) {
+        oppositeCorner = true;
+      }
+    });
+    // If not opposite corner and center is open, take center
+    if (!oppositeCorner && (moveType === 'corner' || moveType === 'edge')) {
+      return this.setMovement(this.center);
+    }
+    // If opposite corner was played, take next random corner
+    return this.getRandomCornerPosition(squares);
+  }
+
+  /**
+   * Block opponent winning move or pick a side square
+   * @param squares list of squares
+   * @returns block win or side move
+   */
+  private fourthMove(squares: Square[]): Movement {
+    let nextMove = this.getRandomSidePosition(squares);
+    const blockOpponentWinningMove = this.getWinMovement(squares, 'x');
+    if (blockOpponentWinningMove) {
+      nextMove = blockOpponentWinningMove;
+    }
+    return nextMove;
+  }
+
+  /**
+   * Checks for win move, then check for block move
+   * Prioritizes corner over side movement to setup a fork to win
+   * @param squares list of remaining squares
+   * @returns next best move
+   */
+  private nextBestMove(squares: Square[]): Movement {
+      const remainingCorners = squares.filter(square => square.value === '' && this.corners.some(corner => corner === square.position));
+      let nextMove = this.getRandomPosition(squares)
+      // Check for win move
+      const winningMove = this.getWinMovement(squares, 'o');
+      // Check for block move
+      const blockOpponentWinningMove = this.getWinMovement(squares, 'x');
+      if (winningMove) {
+        nextMove = winningMove;
+      } else if (blockOpponentWinningMove) {
+        nextMove = blockOpponentWinningMove;
+      } else if (remainingCorners) {
+        nextMove = this.getRandomCornerPosition(squares);
+      }
+    return nextMove;
   }
 
   /**
