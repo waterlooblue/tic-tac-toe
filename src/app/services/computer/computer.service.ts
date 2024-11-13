@@ -177,6 +177,16 @@ export class ComputerService {
   }
 
   /**
+   * Returns value of a square
+   * @param position square position
+   * @param squares list of all squares
+   * @returns value of a square by position
+   */
+  private getValueOfSquareByPosition(position: number, squares: Square[]): string | undefined {
+    return squares.find(square => square.position === position)?.value;
+  }
+
+  /**
    * Determines possible winning moves or if win exist
    * @param playerSquares list of player squares
    * @param combo winning combination
@@ -240,9 +250,12 @@ export class ComputerService {
    */
   private fourthMove(squares: Square[]): Movement {
     let nextMove = this.getRandomSidePosition(squares);
+    const valueOfCenterSquare = this.getValueOfSquareByPosition(this.center, squares);
     const blockOpponentWinningMove = this.getWinMovement(squares, 'x');
     if (blockOpponentWinningMove) {
       nextMove = blockOpponentWinningMove;
+    } else if (valueOfCenterSquare === 'x') {
+      nextMove = this.getRandomCornerPosition(squares);
     }
     return nextMove;
   }
