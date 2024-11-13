@@ -1,5 +1,9 @@
 # TicTacToe
 
+## Demo
+https://waterlooblue.github.io/tic-tac-toe/
+
+## AI Movement logic
 Used this blog post as a guide to the computer movements logic
 [How to win in tic tac toe](https://tictactoefree.com/tips/how-to-win-in-tic-tac-toe)
 [How to win in tic tac toe if you go second](https://tictactoefree.com/tips/how-to-win-tic-tac-toe-if-you-go-second)
