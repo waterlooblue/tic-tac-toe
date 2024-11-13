@@ -1,7 +1,8 @@
 # TicTacToe
 
-https://tictactoefree.com/tips/how-to-win-in-tic-tac-toe
-https://tictactoefree.com/tips/how-to-win-tic-tac-toe-if-you-go-second
+Used this blog post as a guide to the computer movements logic
+[How to win in tic tac toe](https://tictactoefree.com/tips/how-to-win-in-tic-tac-toe)
+[How to win in tic tac toe if you go second](https://tictactoefree.com/tips/how-to-win-tic-tac-toe-if-you-go-second)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.11.
 
