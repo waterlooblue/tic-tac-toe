@@ -68,13 +68,13 @@ export class MovementsService {
    * @param currentPlayer the current player
    * @returns if the game has been won
    */
-  isGameWon(currentPlayer: string): boolean {
+  getWinningMovements(currentPlayer: string): Movement[] {
     const currentPlayerMovements = this.getPlayerMovements(currentPlayer);
-    let gameIsWon = false;
+    let gameIsWon: Movement[] = [];
     this.winningCombinations.forEach(combo => {
       const matchingMovements = this.compareWinningMovements(currentPlayerMovements, combo);
       if (matchingMovements.length === 3) {
-        gameIsWon = true;
+        gameIsWon = matchingMovements;
       }
     });
     return gameIsWon;
