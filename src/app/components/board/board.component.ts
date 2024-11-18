@@ -4,6 +4,7 @@ import { SquareComponent } from '../square/square.component';
 import { MovementsService } from '../../services/movements/movements.service';
 import { ComputerService } from '../../services/computer/computer.service';
 import { Square } from '../../model/square';
+import { Movement } from '../../model/movement';
 
 @Component({
   selector: 'app-board',
@@ -20,18 +21,17 @@ export class BoardComponent {
   isGameDraw = false;
   playerOneWins = 0;
   playerTwoWins = 0;
-  computerWins = 0;
   draws = 0;
   squares: Square[] = [
-    { position: 0, value: '', enabled: true },
-    { position: 1, value: '', enabled: true },
-    { position: 2, value: '', enabled: true },
-    { position: 3, value: '', enabled: true },
-    { position: 4, value: '', enabled: true },
-    { position: 5, value: '', enabled: true },
-    { position: 6, value: '', enabled: true },
-    { position: 7, value: '', enabled: true },
-    { position: 8, value: '', enabled: true }
+    { position: 0, value: '', enabled: true, win: false },
+    { position: 1, value: '', enabled: true, win: false },
+    { position: 2, value: '', enabled: true, win: false },
+    { position: 3, value: '', enabled: true, win: false },
+    { position: 4, value: '', enabled: true, win: false },
+    { position: 5, value: '', enabled: true, win: false },
+    { position: 6, value: '', enabled: true, win: false },
+    { position: 7, value: '', enabled: true, win: false },
+    { position: 8, value: '', enabled: true, win: false }
   ];
   constructor(private movementsService: MovementsService, private computerService: ComputerService) { }
   
@@ -54,7 +54,6 @@ export class BoardComponent {
     this.playComputer = !this.playComputer;
     this.playerOneWins = 0;
     this.playerTwoWins = 0;
-    this.computerWins = 0;
     this.draws = 0;
     this.reset();
   }
@@ -66,7 +65,8 @@ export class BoardComponent {
     this.movementsService.resetBoard();
     this.squares.forEach((square => {
       square.enabled = true;
-      square.value = ''
+      square.value = '';
+      square.win = false;
     }));
     this.isGameWon = false;
     this.isGameDraw = false;
@@ -100,16 +100,16 @@ export class BoardComponent {
    * Switches to next player if the game continues
    */
   private checkBoardForEnd(): void {
-    this.isGameWon = this.movementsService.isGameWon(this.currentPlayer);
+    const winningMovements = this.movementsService.getWinningMovements(this.currentPlayer);
+    this.isGameWon = winningMovements.length === 3;
     this.isGameDraw = this.movementsService.isGameDraw() && !this.isGameWon;
     if (this.isGameWon) {
       if (this.currentPlayer === 'x') {
         this.playerOneWins += 1;
-      } else if (this.playComputer && this.currentPlayer === 'o') {
-        this.computerWins += 1;
       } else {
         this.playerTwoWins += 1;
       }
+      this.showWinSquares(this.squares, winningMovements);
       this.disableAllSquares(this.squares);
     } else if (!this.isGameDraw) {
       this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
@@ -149,5 +149,18 @@ export class BoardComponent {
    */
   private disableAllSquares(squares: Square[]): void {
     squares.forEach(square => square.enabled = false);
+  }
+
+  /**
+   * Set the winning squares to green
+   * @param squares list of all squares
+   * @param movements list of winning movements
+   */
+  private showWinSquares(squares: Square[], movements: Movement[]): void {
+    squares.forEach(square => {
+      if (movements.some(movement => movement.position === square.position)) {
+        square.win = true;
+      }
+    })
   }
 }
