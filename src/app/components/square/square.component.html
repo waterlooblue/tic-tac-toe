@@ -3,8 +3,9 @@
   class="inner-square"
   [disabled]="!props.enabled"
   [ngClass]="{
-    'text-blue': props.value === 'x',
-    'text-orange': props.value === 'o'
+    'text-x': props.value === 'x',
+    'text-o': props.value === 'o',
+    'win': props.win
   }"
 >
   {{ props.value }}
