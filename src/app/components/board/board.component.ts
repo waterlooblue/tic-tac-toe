@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faUser, faComputer, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { SquareComponent } from '../square/square.component';
 import { MovementsService } from '../../services/movements/movements.service';
 import { ComputerService } from '../../services/computer/computer.service';
@@ -9,12 +11,15 @@ import { Movement } from '../../model/movement';
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, SquareComponent],
+  imports: [CommonModule, SquareComponent, FontAwesomeModule],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
 })
 export class BoardComponent {
   // Initialize the board
+  faUser = faUser;
+  faComputer = faComputer;
+  faRotateRight = faRotateRight;
   currentPlayer = 'x';
   playComputer = false;
   isGameWon = false;

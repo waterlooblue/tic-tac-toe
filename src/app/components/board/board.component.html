@@ -1,15 +1,23 @@
 <div class="background">
   <section class="container">
-    <div class="player-toggle">
-      <button (click)="togglePlayers()" [disabled]="!playComputer" class="player">2 Players</button>
-      <button (click)="togglePlayers()" [disabled]="playComputer" class="computer">Play vs Computer</button>
-    </div>
     <div class="top-row">
+      <div class="player-toggle">
+        <button (click)="togglePlayers()" [disabled]="!playComputer" class="player">
+          <fa-icon [icon]="faUser"></fa-icon>
+          <fa-icon [icon]="faUser"></fa-icon>
+        </button>
+        <button (click)="togglePlayers()" [disabled]="playComputer" class="computer">
+          <fa-icon [icon]="faComputer"></fa-icon>
+        </button>
+      </div>
       <div class="turn" [ngSwitch]="!isGameDraw || !isGameWon">
         <p *ngSwitchCase="isGameDraw">Draw</p>
         <p *ngSwitchCase="isGameWon">{{ currentPlayer }} wins</p>
         <p *ngSwitchDefault>{{ currentPlayer === 'x' ? 'X' : 'O' }} turn</p>
-        <button *ngIf="isGameWon || isGameDraw" (click)="reset()" class="reset">{{'Play Again'}}</button>
+        <button *ngIf="isGameWon || isGameDraw" (click)="reset()" class="reset">
+          <fa-icon [icon]="faRotateRight"></fa-icon>
+          <span> {{'Play Again'}}</span>
+        </button>
       </div>
     </div>
     <div [ngClass]="{'complete': isGameWon || isGameDraw}" class="grid">

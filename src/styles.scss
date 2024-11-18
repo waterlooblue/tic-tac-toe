@@ -10,8 +10,7 @@ button {
   font-weight: bold;
   font-size: 1.1rem;
   padding: 10px 20px;
-  border: 1px solid rgb(34, 156, 150);
-  background-color: rgb(34, 156, 150);
+  border: 1px solid;
   border-radius: 5px;
   &:not(:disabled) {
     cursor: pointer;
