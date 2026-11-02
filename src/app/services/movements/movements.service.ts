@@ -1,31 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Movement } from '../../model/movement';
+import { WINNING_COMBINATIONS } from '../../model/winning-combinations';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovementsService {
-  constructor() { }
-
-  /**
-   * Grid values
-   * 0 | 1 | 2
-   * 3 | 4 | 5
-   * 6 | 7 | 8 
-   */
-  // There are 8 combinations that equal a win (3 squares in a row)
-  winningCombinations = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-
-   // Tracks all movements
+  // Tracks all movements
   movements: Movement[] = [];
 
   /**
@@ -70,14 +51,13 @@ export class MovementsService {
    */
   getWinningMovements(currentPlayer: string): Movement[] {
     const currentPlayerMovements = this.getPlayerMovements(currentPlayer);
-    let gameIsWon: Movement[] = [];
-    this.winningCombinations.forEach(combo => {
-      const matchingMovements = this.compareWinningMovements(currentPlayerMovements, combo);
+    for (const combo of WINNING_COMBINATIONS) {
+      const matchingMovements = currentPlayerMovements.filter(move => combo.includes(move.position));
       if (matchingMovements.length === 3) {
-        gameIsWon = matchingMovements;
+        return matchingMovements;
       }
-    });
-    return gameIsWon;
+    }
+    return [];
   }
 
   /**
@@ -87,15 +67,5 @@ export class MovementsService {
    */
   private getPlayerMovements(player: string): Movement[] {
     return this.movements.filter(move => move.player === player);
-  }
-
-  /**
-   * Determines possible winning moves or if win exist
-   * @param playerMovements list of player movements
-   * @param combo winning combination
-   * @returns matching movements to winning combinations
-   */
-  private compareWinningMovements(playerMovements: Movement[], combo: number[]): Movement[] {
-    return playerMovements.filter(move => move.position === combo[0] || move.position === combo[1] || move.position === combo[2]);
   }
 }

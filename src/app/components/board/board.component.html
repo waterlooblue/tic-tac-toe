@@ -13,9 +13,9 @@
         </button>
       </div>
       <div class="game-stage">
-        <div class="turn" [ngSwitch]="!isGameDraw || !isGameWon">
+        <div class="turn" [ngSwitch]="true">
           <p *ngSwitchCase="isGameDraw">Draw</p>
-          <p *ngSwitchCase="isGameWon">{{ currentPlayer }} wins</p>
+          <p *ngSwitchCase="isGameWon">{{ currentPlayer === 'x' ? 'X' : 'O' }} wins</p>
           <p *ngSwitchDefault>{{ currentPlayer === 'x' ? 'X' : 'O' }} {{'turn'}}</p>
         </div>
         <button *ngIf="isGameWon || isGameDraw" (click)="reset()" class="reset">
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div [ngClass]="{'complete': isGameWon || isGameDraw}" class="grid">
-      <app-square *ngFor="let square of squares" [props]="{position: square.position, enabled: square.enabled, value: square.value, win: square.win}" (clickEvent)="receiveClick($event)" class="square"/>
+      <app-square *ngFor="let square of squares; trackBy: trackByPosition" [props]="square" (clickEvent)="receiveClick($event)" class="square"/>
     </div>
     <div class="row">
       <div class="wins-x">
