@@ -20,9 +20,17 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
+## Deployment
+
+The [Test and deploy](.github/workflows/deploy.yml) GitHub Actions workflow runs the unit tests on every pull request and push to `main`. When tests pass on `main`, it builds the app and deploys it to GitHub Pages. It can also be run manually from the **Actions** tab.
+
+One-time setup: in the repository **Settings → Pages**, set **Source** to **GitHub Actions**.
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+To run them once in a headless browser (as CI does), run `npx ng test --browsers=ChromeHeadlessCI --watch=false`.
 
 ## Running end-to-end tests
 
