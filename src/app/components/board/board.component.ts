@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUser, faComputer, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { SquareComponent } from '../square/square.component';
@@ -15,7 +15,9 @@ import { Movement } from '../../model/movement';
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
 })
-export class BoardComponent {
+export class BoardComponent implements OnDestroy {
+  // Delay before the computer plays so its move is visible
+  static readonly COMPUTER_DELAY_MS = 300;
   // Initialize the board
   faUser = faUser;
   faComputer = faComputer;
@@ -27,6 +29,7 @@ export class BoardComponent {
   playerOneWins = 0;
   playerTwoWins = 0;
   draws = 0;
+  private computerTimeout: ReturnType<typeof setTimeout> | null = null;
   squares: Square[] = [
     { position: 0, value: '', enabled: true, win: false },
     { position: 1, value: '', enabled: true, win: false },
@@ -39,17 +42,31 @@ export class BoardComponent {
     { position: 8, value: '', enabled: true, win: false }
   ];
   constructor(private movementsService: MovementsService, private computerService: ComputerService) { }
-  
+
+  ngOnDestroy(): void {
+    this.cancelComputerMove();
+  }
+
   /**
    * Adds the player movement and check for win or draw
    * @param $event the number of the square
    */
   receiveClick ($event: number) {
     // Prevents player clicking cells when its the computers turn
-    if (!this.playComputer || (this.playComputer && this.currentPlayer === 'x')) {
+    if (!this.playComputer || this.currentPlayer === 'x') {
       this.playerMove($event);  
       this.checkBoardForEnd();
     }
+  }
+
+  /**
+   * Keeps square components stable between change detection cycles
+   * @param _index index of the square
+   * @param square the square
+   * @returns the square position
+   */
+  trackByPosition(_index: number, square: Square): number {
+    return square.position;
   }
 
   /**
@@ -67,6 +84,7 @@ export class BoardComponent {
    * Resets the board state
    */
   reset() {
+    this.cancelComputerMove();
     this.movementsService.resetBoard();
     this.squares.forEach((square => {
       square.enabled = true;
@@ -77,7 +95,28 @@ export class BoardComponent {
     this.isGameDraw = false;
     this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
     if (this.playComputer && this.currentPlayer === 'o') {
-      setTimeout(() => this.computerMove(), 300);
+      this.scheduleComputerMove();
+    }
+  }
+
+  /**
+   * Plays the computer move after a short delay
+   */
+  private scheduleComputerMove(): void {
+    this.cancelComputerMove();
+    this.computerTimeout = setTimeout(() => {
+      this.computerTimeout = null;
+      this.computerMove();
+    }, BoardComponent.COMPUTER_DELAY_MS);
+  }
+
+  /**
+   * Cancels a pending computer move so it does not play on a reset board
+   */
+  private cancelComputerMove(): void {
+    if (this.computerTimeout !== null) {
+      clearTimeout(this.computerTimeout);
+      this.computerTimeout = null;
     }
   }
 
@@ -120,7 +159,7 @@ export class BoardComponent {
       this.currentPlayer = this.movementsService.nextPlayer(this.currentPlayer);
       if (this.playComputer && this.currentPlayer === 'o') {
         // Call next move for the computer
-        setTimeout(() => this.computerMove(), 300);
+        this.scheduleComputerMove();
       }
     } else {
       this.draws += 1;
@@ -133,7 +172,7 @@ export class BoardComponent {
    * @returns square object
    */
   private getSquareByPosition(position: number): Square | undefined {
-    return this.squares.find(square => square?.position === position);
+    return this.squares.find(square => square.position === position);
   }
 
   /**
@@ -142,7 +181,7 @@ export class BoardComponent {
    */
   private setSquareValue(position: number) {
     const square = this.getSquareByPosition(position);
-    if(square != null) {
+    if (square) {
       square.value = this.currentPlayer;
       square.enabled = false;
     }
